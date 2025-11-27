@@ -1,187 +1,121 @@
 # Auth Service
 
-Микросервис для аутентификации и авторизации пользователей. Поддерживает регистрацию, вход, управление сессиями и токенами.
+Microservice for user authentication and authorization. Supports registration, login, session and token management.
 
-## Технологический стек
+## Technology Stack
 
 - **Go** 1.21+
-- **PostgreSQL** 15+ - основная база данных
-- **Redis** 7+ - черные списки токенов и сессии
-- **Gin** - HTTP веб-фреймворк
-- **JWT** - токены аутентификации
+- **PostgreSQL** 15+ - main database
+- **Redis** 7+ - token blacklists and sessions
+- **Gin** - HTTP web framework
+- **JWT** - authentication tokens
 
-## Функциональность
+## Features
 
-### MVP (Текущая версия)
+### MVP (Current Version)
 
-- ✅ Регистрация пользователя
-- ✅ Вход пользователя
-- ✅ Обновление токенов (refresh token)
-- ✅ Выход пользователя
-- ✅ Получение профиля текущего пользователя
-- ✅ Валидация токенов (middleware)
+- ✅ User registration
+- ✅ User login
+- ✅ Token refresh
+- ✅ User logout
+- ✅ Get current user profile
+- ✅ Token validation (middleware)
 
-### Планируется
+### Planned
 
-- 🔄 Восстановление пароля
-- 🔄 Подтверждение email
-- 🔄 OAuth2 интеграция (Google, Apple, Facebook)
-- 🔄 Двухфакторная аутентификация (2FA)
-- 🔄 Управление активными сессиями
+- 🔄 Password recovery
+- 🔄 Email verification
+- 🔄 OAuth2 integration (Google, Apple, Facebook)
+- 🔄 Two-factor authentication (2FA)
+- 🔄 Active session management
 
-## Быстрый старт
+## Quick Start
 
-### Требования
+### Requirements
 
 - Go 1.21+
-- Docker и Docker Compose
-- Make (опционально)
+- Docker and Docker Compose
+- Make (optional)
 
-### Установка
+### Installation
 
-1. Клонируйте репозиторий:
+1. Clone the repository:
 ```bash
 git clone <repository-url>
 cd auth-service-2
 ```
 
-2. Скопируйте файл с переменными окружения:
+2. Copy the environment variables file:
 ```bash
 cp .env.example .env
 ```
 
-3. Запустите Docker контейнеры (PostgreSQL и Redis):
+3. Start Docker containers (PostgreSQL and Redis):
 ```bash
 make docker-up
-# или
+# or
 docker-compose up -d
 ```
 
-4. Запустите миграции базы данных:
+4. Run database migrations:
 ```bash
 make migrate-up
 ```
 
-5. Установите зависимости:
+5. Install dependencies:
 ```bash
 make deps
-# или
+# or
 go mod download
 ```
 
-6. Запустите сервис:
+6. Start the service:
 ```bash
 make run
-# или
+# or
 go run ./cmd/server
 ```
 
-Сервис будет доступен по адресу: `http://localhost:8080`
+The service will be available at: `http://localhost:8080`
 
-## Конфигурация
+## Configuration
 
-Все настройки конфигурируются через переменные окружения. См. `.env.example` для списка доступных переменных.
+All settings are configured through environment variables. See `.env.example` for a list of available variables.
 
-### Основные переменные:
+### Main variables:
 
-- `SERVER_PORT` - порт сервера (по умолчанию: 8080)
-- `JWT_SECRET` - секретный ключ для JWT (обязательно, минимум 32 символа)
-- `POSTGRES_HOST`, `POSTGRES_PORT`, `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB` - настройки PostgreSQL
-- `REDIS_HOST`, `REDIS_PORT` - настройки Redis
+- `SERVER_PORT` - server port (default: 8080)
+- `JWT_SECRET` - secret key for JWT (required, minimum 32 characters)
+- `POSTGRES_HOST`, `POSTGRES_PORT`, `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB` - PostgreSQL settings
+- `REDIS_HOST`, `REDIS_PORT` - Redis settings
 
-## API Документация
+### Main endpoints:
 
-OpenAPI спецификация доступна в файле `openapi.yaml`.
+- `POST /api/v1/auth/register` - Registration
+- `POST /api/v1/auth/login` - Login
+- `POST /api/v1/auth/refresh` - Token refresh
+- `POST /api/v1/auth/logout` - Logout
+- `GET /api/v1/auth/me` - Get profile (requires authorization)
 
-Для просмотра документации можно использовать:
-- [Swagger Editor](https://editor.swagger.io/)
-- [Swagger UI](https://swagger.io/tools/swagger-ui/)
-
-### Основные endpoints:
-
-- `POST /api/v1/auth/register` - Регистрация
-- `POST /api/v1/auth/login` - Вход
-- `POST /api/v1/auth/refresh` - Обновление токенов
-- `POST /api/v1/auth/logout` - Выход
-- `GET /api/v1/auth/me` - Получение профиля (требует авторизации)
-
-## Разработка
-
-### Структура проекта
-
-```
-auth-service-2/
-├── cmd/server/          # Точка входа приложения
-├── internal/            # Внутренние пакеты
-│   ├── config/         # Конфигурация
-│   ├── domain/         # Доменные модели
-│   ├── repository/     # Репозитории (доступ к данным)
-│   ├── service/        # Бизнес-логика
-│   ├── handler/        # HTTP handlers
-│   ├── dto/           # Data Transfer Objects
-│   └── utils/         # Утилиты
-├── pkg/                # Публичные пакеты
-│   └── database/      # Подключение к БД
-├── migrations/         # Миграции базы данных
-└── openapi.yaml       # OpenAPI спецификация
-```
-
-### Команды Make
+### Make Commands
 
 ```bash
-make help           # Показать все доступные команды
-make deps           # Установить зависимости
-make build          # Собрать приложение
-make run            # Запустить приложение
-make test           # Запустить тесты
-make lint           # Запустить линтер
-make fmt            # Форматировать код
-make docker-up      # Запустить Docker контейнеры
-make docker-down    # Остановить Docker контейнеры
-make migrate-up     # Применить миграции
-make migrate-down   # Откатить миграции
-make migrate-create NAME=create_table  # Создать новую миграцию
+make help           # Show all available commands
+make deps           # Install dependencies
+make build          # Build the application
+make run            # Run the application
+make test           # Run tests
+make lint           # Run linter
+make fmt            # Format code
+make docker-up      # Start Docker containers
+make docker-down    # Stop Docker containers
+make migrate-up     # Apply migrations
+make migrate-down   # Rollback migrations
+make migrate-create NAME=create_table  # Create a new migration
 ```
 
-### Миграции базы данных
-
-Применить миграции:
-```bash
-make migrate-up
-```
-
-Откатить миграции:
-```bash
-make migrate-down
-```
-
-Создать новую миграцию:
-```bash
-make migrate-create NAME=add_new_column
-```
-
-### Тестирование
-
-Запустить все тесты:
-```bash
-make test
-```
-
-Запустить тесты с покрытием:
+Run tests with coverage:
 ```bash
 go test -v -race -coverprofile=coverage.out ./...
 go tool cover -html=coverage.out -o coverage.html
 ```
-
-## Безопасность
-
-- Пароли хешируются с помощью bcrypt
-- JWT токены подписываются с использованием HMAC
-- Refresh tokens хранятся в httpOnly cookies
-- Access tokens имеют короткий срок жизни (15 минут)
-- Refresh tokens имеют длинный срок жизни (7 дней)
-- Инвалидированные токены добавляются в blacklist (Redis)
-
-## Лицензия
-
-MIT

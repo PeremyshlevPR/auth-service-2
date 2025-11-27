@@ -6,14 +6,8 @@ info:
     Сервис поддерживает регистрацию, вход, управление сессиями и токенами.
   version: 1.0.0
   contact:
-    name: Auth Service Team
-    email: support@auth-service.com
-
-servers:
-  - url: https://api.auth-service.com/api/v1
-    description: Production server
-  - url: http://localhost:8080/api/v1
-    description: Development server
+    name: Pavel Peremyshlev
+    email: peremyshlevv@bk.ru
 
 tags:
   - name: auth
