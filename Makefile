@@ -1,4 +1,4 @@
-.PHONY: help build run test clean migrate-up migrate-down migrate-create docker-up docker-down deps
+.PHONY: help build run test clean migrate-up migrate-down migrate-create docker-up docker-down deps test-acceptance test-acceptance-up test-acceptance-down
 
 # Variables
 BINARY_NAME=auth-service
@@ -63,6 +63,21 @@ fmt: ## Format code
 
 vet: ## Run go vet
 	go vet ./...
+
+test-acceptance-up:
+	@echo "Deploying test infrastructure..."
+	docker-compose -f docker-compose.test.yml up -d
+	@echo "Test infrastructure deployed successfully"
+	
+test-acceptance-down:
+	@echo "Stopping test infrastructure..."
+	docker-compose -f docker-compose.test.yml down -v
+	@echo "Test infrastructure stopped successfully"
+
+test-acceptance: test-acceptance-up
+	@echo "Running acceptance tests..."
+	go test -v ./tests/acceptance/...
+	@$(MAKE) test-acceptance-down
 
 .DEFAULT_GOAL := help
 

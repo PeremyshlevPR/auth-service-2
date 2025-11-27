@@ -1,44 +1,36 @@
 services:
   postgres:
     image: postgres:15-alpine
-    container_name: auth-service-postgres
+    container_name: auth-service-postgres-test
     environment:
       POSTGRES_USER: auth_service
       POSTGRES_PASSWORD: auth_service_password
       POSTGRES_DB: auth_service_db
     ports:
       - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U auth_service"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      interval: 5s
+      timeout: 3s
+      retries: 10
     networks:
-      - auth-network
+      - auth-network-test
 
   redis:
     image: redis:7-alpine
-    container_name: auth-service-redis
+    container_name: auth-service-redis-test
     ports:
       - "6379:6379"
-    volumes:
-      - redis_data:/data
     command: redis-server --appendonly yes
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      interval: 5s
+      timeout: 3s
+      retries: 10
     networks:
-      - auth-network
-
-volumes:
-  postgres_data:
-  redis_data:
+      - auth-network-test
 
 networks:
-  auth-network:
+  auth-network-test:
     driver: bridge
 
