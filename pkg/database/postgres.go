@@ -1,6 +1,7 @@
 package database
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 
@@ -32,6 +33,6 @@ func (p *Postgres) Close() error {
 }
 
 // Ping checks if the database is available
-func (p *Postgres) Ping() error {
-	return p.DB.Ping()
+func (p *Postgres) Ping(ctx context.Context) error {
+	return p.DB.PingContext(ctx)
 }

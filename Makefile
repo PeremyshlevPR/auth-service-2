@@ -64,17 +64,17 @@ fmt: ## Format code
 vet: ## Run go vet
 	go vet ./...
 
-test-acceptance-up:
+test-acceptance-up: ## Deploy test infrastructure
 	@echo "Deploying test infrastructure..."
 	docker-compose -f docker-compose.test.yml up -d
 	@echo "Test infrastructure deployed successfully"
 	
-test-acceptance-down:
+test-acceptance-down: ## Stop test infrastructure
 	@echo "Stopping test infrastructure..."
 	docker-compose -f docker-compose.test.yml down -v
 	@echo "Test infrastructure stopped successfully"
 
-test-acceptance: test-acceptance-up
+test-acceptance: test-acceptance-up ## Run acceptance tests
 	@echo "Running acceptance tests..."
 	go test -v ./tests/acceptance/...
 	@$(MAKE) test-acceptance-down
