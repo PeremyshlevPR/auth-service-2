@@ -2,7 +2,7 @@
 
 Microservice for user authentication and authorization. Supports registration, login, session and token management.
 
-## Technology Stack
+## Tech Stack
 
 - **Go** 1.21+
 - **PostgreSQL** 15+ - main database
@@ -41,7 +41,7 @@ Microservice for user authentication and authorization. Supports registration, l
 
 1. Clone the repository:
 ```bash
-git clone <repository-url>
+git clone https://github.com/PeremyshlevPR/auth-service-2
 cd auth-service-2
 ```
 
