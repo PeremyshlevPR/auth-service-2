@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"time"
 
@@ -60,7 +61,7 @@ func (s *authService) Register(ctx context.Context, req *dto.RegisterRequest) (*
 		return nil, fmt.Errorf("user with email %s already exists", req.Email)
 	}
 	// If error is not NotFound, return it
-	if err != repository.ErrNotFound {
+	if !errors.Is(err, repository.ErrNotFound) {
 		return nil, fmt.Errorf("failed to check user existence: %w", err)
 	}
 
@@ -92,7 +93,7 @@ func (s *authService) Login(ctx context.Context, req *dto.LoginRequest) (*AuthRe
 	// Get user by email
 	user, err := s.userRepo.GetByEmail(ctx, utils.SanitizeEmail(req.Email))
 	if err != nil {
-		if err == repository.ErrNotFound {
+		if errors.Is(err, repository.ErrNotFound) {
 			return nil, fmt.Errorf("invalid email or password")
 		}
 		return nil, fmt.Errorf("failed to get user: %w", err)
@@ -133,7 +134,7 @@ func (s *authService) RefreshToken(ctx context.Context, refreshToken string) (*A
 	// Check if token exists in database
 	dbToken, err := s.tokenRepo.GetByTokenHash(ctx, tokenHash)
 	if err != nil {
-		if err == repository.ErrNotFound {
+		if errors.Is(err, repository.ErrNotFound) {
 			return nil, fmt.Errorf("invalid refresh token")
 		}
 		return nil, fmt.Errorf("failed to get token: %w", err)

@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/google/uuid"
 	"github.com/prperemyshlev/auth-service-2/internal/domain"
 )
 
@@ -55,6 +56,7 @@ func (j *JWTManager) GenerateRefreshToken(userID string) (string, error) {
 		"exp":     time.Now().Add(j.refreshTokenExpiry).Unix(),
 		"iat":     time.Now().Unix(),
 		"type":    "refresh",
+		"jti":     uuid.New().String(),
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
